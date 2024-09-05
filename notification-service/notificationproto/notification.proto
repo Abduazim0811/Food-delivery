@@ -1,0 +1,29 @@
+syntax="proto3";
+
+option go_package="/notificationproto";
+
+message GetNotification {}
+
+message ProduceMessageRequest {
+    string order_id = 1;
+    string message = 2;
+}
+
+message EmailResponse {
+    string message = 1;
+}
+
+message AddUserRequest {
+    string user_id = 1;
+}
+
+message EmailRequest {
+    string email = 1;
+    string message = 2;
+}
+
+service Notification {
+    rpc Notification (ProduceMessageRequest) returns (EmailResponse);
+    rpc AddUser (AddUserRequest) returns (EmailResponse);
+    rpc Email (EmailRequest) returns (EmailResponse);
+}

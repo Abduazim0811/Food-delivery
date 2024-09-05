@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option go_package = "./protos/orderproto";
+
+service OrderService {
+    rpc CreateOrder(CreateOrderReq) returns (CreateOrderRes);
+    rpc GetbyIdOrder(GetOrderReq) returns (GetOrderRes);
+    rpc UpdateOrder(UpdateReq) returns(UpdateOrderRes);
+    rpc DeleteOrder(GetOrderReq) returns(UpdateOrderRes);
+}
+
+message ProductRes {
+    string product_id = 1;
+    int32 quantity = 2;
+}
+
+message UpdateOrderRes{
+    string message = 1;
+}
+
+message CreateOrderReq {
+    repeated ProductRes product = 1;
+    string address = 2;
+    int32 user_id = 3;
+}
+
+message CreateOrderRes {
+    string order_id = 1;
+}
+
+message GetOrderReq {
+    string order_id = 1;
+}
+
+message GetOrderRes {
+    string order_id = 1;
+    repeated ProductRes product = 2;
+    string address = 3;
+    int32 user_id = 4;
+    string status = 5;
+    float  totalamount = 6;
+}
+
+message UpdateReq{
+    string order_id = 1;
+    repeated ProductRes product = 2;
+    string address = 3;
+}

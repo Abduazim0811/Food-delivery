@@ -1,0 +1,996 @@
+definitions:
+  deliveryproto.CreateDeliveryReq:
+    properties:
+      address:
+        type: string
+      order_id:
+        type: string
+    type: object
+  deliveryproto.CreateDeliveryRes:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  deliveryproto.Delivery:
+    properties:
+      address:
+        type: string
+      id:
+        type: string
+      orderId:
+        type: string
+      status:
+        type: string
+    type: object
+  deliveryproto.UpdateDeliveryStatusReq:
+    properties:
+      delivery_id:
+        type: string
+      status:
+        type: string
+    type: object
+  deliveryproto.UpdateDeliveryStatusRes:
+    properties:
+      message:
+        type: string
+    type: object
+  orderproto.CreateOrderReq:
+    properties:
+      address:
+        type: string
+      product:
+        items:
+          $ref: '#/definitions/orderproto.ProductRes'
+        type: array
+      user_id:
+        type: integer
+    type: object
+  orderproto.CreateOrderRes:
+    properties:
+      order_id:
+        type: string
+    type: object
+  orderproto.GetOrderRes:
+    properties:
+      address:
+        type: string
+      order_id:
+        type: string
+      product:
+        items:
+          $ref: '#/definitions/orderproto.ProductRes'
+        type: array
+      status:
+        type: string
+      totalamount:
+        type: number
+      user_id:
+        type: integer
+    type: object
+  orderproto.ProductRes:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  orderproto.UpdateOrderRes:
+    properties:
+      message:
+        type: string
+    type: object
+  orderproto.UpdateReq:
+    properties:
+      address:
+        type: string
+      order_id:
+        type: string
+      product:
+        items:
+          $ref: '#/definitions/orderproto.ProductRes'
+        type: array
+    type: object
+  paymentproto.ProcessPaymentRequest:
+    properties:
+      order_id:
+        type: string
+      payment_details:
+        type: string
+      payment_method:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  paymentproto.ProcessPaymentResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+      transaction_id:
+        type: string
+    type: object
+  paymentproto.RefundPaymentRequest:
+    properties:
+      reason:
+        type: string
+      refund_amount:
+        type: number
+      transaction_id:
+        type: string
+    type: object
+  paymentproto.RefundPaymentResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  productproto.CreateReq:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  productproto.CreateRes:
+    properties:
+      message:
+        type: string
+    type: object
+  productproto.ListProduct:
+    properties:
+      product:
+        items:
+          $ref: '#/definitions/productproto.Product'
+        type: array
+    type: object
+  productproto.Product:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  userproto.Courier:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  userproto.LoginCourierRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  userproto.LoginCourierResponse:
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+    type: object
+  userproto.RegisterCourierRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  userproto.RegisterCourierResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  userproto.RegisterReq:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  userproto.RegisterRes:
+    properties:
+      message:
+        type: string
+    type: object
+  userproto.User:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: integer
+      lastname:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  userproto.UserReq:
+    properties:
+      code:
+        type: integer
+      email:
+        type: string
+    type: object
+  userproto.UserRes:
+    properties:
+      id:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: This is a sample server for a restaurant reservation system.
+  title: Food Delivery
+  version: "1.0"
+paths:
+  /couriers/:
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing courier
+      parameters:
+      - description: Courier update request
+        in: body
+        name: courier
+        required: true
+        schema:
+          $ref: '#/definitions/userproto.Courier'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.Courier'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Update courier details
+      tags:
+      - courier
+  /couriers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing courier by courier ID
+      parameters:
+      - description: Courier ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.RegisterCourierResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Delete courier by ID
+      tags:
+      - courier
+  /couriers/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a courier and return an access token
+      parameters:
+      - description: Courier login request
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/userproto.LoginCourierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.LoginCourierResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Login courier
+      tags:
+      - courier
+  /couriers/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new courier with the given details
+      parameters:
+      - description: Courier registration request
+        in: body
+        name: courier
+        required: true
+        schema:
+          $ref: '#/definitions/userproto.RegisterCourierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.RegisterCourierResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Register a new courier
+      tags:
+      - courier
+  /couriers/verify-code:
+    post:
+      consumes:
+      - application/json
+      description: Verify the courier's code for registration or password reset
+      parameters:
+      - description: Verification request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userproto.UserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.UserRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Verify courier code
+      tags:
+      - courier
+  /delivery:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new delivery with the provided details
+      parameters:
+      - description: Delivery request body
+        in: body
+        name: delivery
+        required: true
+        schema:
+          $ref: '#/definitions/deliveryproto.CreateDeliveryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/deliveryproto.CreateDeliveryRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Create a new delivery
+      tags:
+      - delivery
+  /delivery/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the status of a delivery by its ID
+      parameters:
+      - description: Delivery ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/deliveryproto.Delivery'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Get delivery status by ID
+      tags:
+      - delivery
+  /delivery/update-status:
+    put:
+      consumes:
+      - application/json
+      description: Updates the status of an existing delivery
+      parameters:
+      - description: Delivery update status request
+        in: body
+        name: delivery
+        required: true
+        schema:
+          $ref: '#/definitions/deliveryproto.UpdateDeliveryStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/deliveryproto.UpdateDeliveryStatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Update delivery status
+      tags:
+      - delivery
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new order with the provided details
+      parameters:
+      - description: Order request body
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/orderproto.CreateOrderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/orderproto.CreateOrderRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Create a new order
+      tags:
+      - order
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing order with the provided details
+      parameters:
+      - description: Order update request
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/orderproto.UpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/orderproto.UpdateOrderRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Update an order
+      tags:
+      - order
+  /orders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an order by its ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/orderproto.UpdateOrderRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Delete an order
+      tags:
+      - order
+    get:
+      consumes:
+      - application/json
+      description: Retrieves an order by its ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/orderproto.GetOrderRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Get order by ID
+      tags:
+      - order
+  /payment/process:
+    post:
+      consumes:
+      - application/json
+      description: Processes a payment based on the provided payment details
+      parameters:
+      - description: Payment processing request
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/paymentproto.ProcessPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/paymentproto.ProcessPaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Process a payment
+      tags:
+      - payment
+  /payment/refund:
+    post:
+      consumes:
+      - application/json
+      description: Refunds a payment based on the provided refund details
+      parameters:
+      - description: Payment refund request
+        in: body
+        name: refund
+        required: true
+        schema:
+          $ref: '#/definitions/paymentproto.RefundPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/paymentproto.RefundPaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Refund a payment
+      tags:
+      - payment
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productproto.ListProduct'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Get all products
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with the given details
+      parameters:
+      - description: Product creation request
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/productproto.CreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productproto.CreateRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Create a new product
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing product
+      parameters:
+      - description: Product update request
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/productproto.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productproto.CreateRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Update product details
+      tags:
+      - product
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing product by product ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productproto.CreateRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Delete product by ID
+      tags:
+      - product
+    get:
+      consumes:
+      - application/json
+      description: Retrieve product details by product ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productproto.Product'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Get product by ID
+      tags:
+      - product
+  /users/:
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing user
+      parameters:
+      - description: User update request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userproto.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.RegisterRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Update user details
+      tags:
+      - user
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing user by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.RegisterRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Delete user by ID
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user details by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer Auth: []
+      summary: Get user by ID
+      tags:
+      - user
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: User request body
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userproto.RegisterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.RegisterRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new user
+      tags:
+      - user
+  /users/verify-code:
+    post:
+      consumes:
+      - application/json
+      description: Verify the user's code for registration or password reset
+      parameters:
+      - description: Verification request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userproto.UserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userproto.UserRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Verify user code
+      tags:
+      - user
+securityDefinitions:
+  Bearer:
+    description: Enter the token in the format `Bearer {token}`
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

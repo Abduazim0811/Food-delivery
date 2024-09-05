@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+option go_package = "./userproto";
+
+service UserService{
+    rpc Register(RegisterReq) returns(RegisterRes);
+    rpc VerifyCode(UserReq) returns(UserRes);
+    rpc Login(LoginReq) returns(LoginRes);
+    rpc GetbyIdUser(UserRes) returns(User);
+    rpc UpdateUser(User) returns(RegisterRes);
+    rpc DeleteUser(UserRes) returns(RegisterRes);
+    rpc RegisterCourier(RegisterCourierRequest) returns (RegisterCourierResponse);
+    rpc VerifyCodeCourier(UserReq) returns(UserRes);
+    rpc LoginCourier(LoginCourierRequest) returns (LoginCourierResponse);
+    rpc UpdateCourier(Courier) returns(RegisterCourierResponse);
+    rpc DeleteCourier(UserRes) returns(RegisterCourierResponse);
+}
+
+message User{
+    int32 id               = 1;
+    string firstname        = 2;
+    string lastname         = 3;
+    string phone            = 4;
+    string email            = 5;
+    string password         = 6;
+};
+
+message Courier{
+    int32  id   = 1;
+    string name = 2;
+    string email = 3;
+    string phone_number = 4;
+    string password = 5;
+}
+
+message RegisterCourierRequest {
+    string name = 1;
+    string email = 2;
+    string phone_number = 3;
+    string password = 4;
+}
+
+message RegisterCourierResponse {
+    string message = 1;
+}
+
+message LoginCourierRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginCourierResponse {
+    string token = 1;
+    string message = 2;
+}
+
+message RegisterReq{
+    string firstname        = 1;
+    string lastname         = 2;
+    string phone            = 3;
+    string email            = 4;
+    string password         = 5;
+}
+
+message UserRes{
+    int32 id               = 1;
+}
+
+message UserReq{
+    string email            = 1;
+    int32  code             = 2;
+}
+
+message RegisterRes{
+    string message          = 1;
+}
+
+message LoginReq{
+    string email            = 1;
+    string password             = 2;
+}
+
+message LoginRes{
+    string token            = 1;
+}

@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option go_package = "./protos/deliveryproto";
+
+service DeliveryService {
+    rpc CreateDelivery(CreateDeliveryReq) returns (CreateDeliveryRes);
+    rpc GetDeliveryStatus(GetDeliveryStatusReq) returns (Delivery);
+    rpc UpdateDeliveryStatus(UpdateDeliveryStatusReq) returns (UpdateDeliveryStatusRes);
+}
+
+message Delivery{
+    string id           = 1;
+    string orderId      = 2;
+    string curier_id    = 3;
+    string address      = 4;
+    string status       = 5;
+}
+
+message CreateDeliveryReq {
+    string curier_id    = 1;
+    string order_id     = 2;
+    string address      = 3;
+}
+
+message CreateDeliveryRes {
+    string id      = 1;
+    string message = 2;
+}
+
+message GetDeliveryStatusReq {
+    string delivery_id = 1;
+}
+
+message GetDeliveryStatusRes {
+    string delivery_id = 1;
+    string status = 2;
+}
+
+message UpdateDeliveryStatusReq {
+    string delivery_id = 1;
+    string status = 2;
+}
+
+message UpdateDeliveryStatusRes {
+    string message = 1;
+}

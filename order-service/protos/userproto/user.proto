@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "./userproto";
+
+service UserService{
+    rpc Register(RegisterReq) returns(RegisterRes);
+    rpc VerifyCode(UserReq) returns(UserRes);
+    rpc Login(LoginReq) returns(LoginRes);
+    rpc GetbyIdUser(UserRes) returns(User);
+    rpc UpdateUser(User) returns(RegisterRes);
+    rpc DeleteUser(UserRes) returns(RegisterRes);
+}
+
+message User{
+    int32 id               = 1;
+    string firstname        = 2;
+    string lastname         = 3;
+    string phone            = 4;
+    string email            = 5;
+    string password         = 6;
+};
+
+message RegisterReq{
+    string firstname        = 1;
+    string lastname         = 2;
+    string phone            = 3;
+    string email            = 4;
+    string password         = 5;
+}
+
+message UserRes{
+    int32 id               = 1;
+}
+
+message UserReq{
+    string email            = 1;
+    int32  code             = 2;
+}
+
+message RegisterRes{
+    string message          = 1;
+}
+
+message LoginReq{
+    string email            = 1;
+    string password             = 2;
+}
+
+message LoginRes{
+    string token            = 1;
+}
